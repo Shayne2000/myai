@@ -42,8 +42,10 @@ for i in range(dimention) :  #not sure it has to be array though
     
     # print(df['Species'].unique()[i])
 
-for i in range(len(y)) :
-    y[i] = encode[y[i]]
+# print(y)
+
+# for i in range(len(y)) :
+#     y[i] = encode[y[i]]
 
 # print(y)
 
@@ -61,14 +63,19 @@ xs = xs_const.copy()
 
 n_attribute = len(xs[0:1].values[0])
 
-w_sum = [0,0,0,0]
+w_sum = {}
+for i in range(dimention) :
+    w = []
+    for j in range(n_attribute) :   #random ครั้งแรก  ทำครั้งเดียว
+        w.append(random.randint(-10,10))
+    w_sum[i] = w
 
 step = 10
 
 
     
 
-# print('w :',w)
+print('w :',w_sum)
 
 # print('old :',xs_const[0:1])
 # print('new :',xs[0:1].values[0]*w)
@@ -77,26 +84,39 @@ step = 10
 
 
 def guess_weight (adjust_times,index) :
-    w = []
-    for i in range(n_attribute) :   #random ครั้งแรก  ทำครั้งเดียว
-        w.append(random.randint(-10,10))
-    for _ in range(adjust_times) :
-        for i in range(len(w)) :   #ปรับเป็น step
-            diff = xs[index:index+1].values[0][i]*w[i]-xs_const[index:index+1].values[0][i] 
-            
-            if diff != 0 :
-                w[i] -= (abs(diff)/diff)*step
-    return w
+    
+    vector_of_values = []
+    
+    for output_num in range(dimention):
+
+        value = np.sum(sum(xs[index:index+1].values*w_sum[output_num]))
+        
+        print('value :',value)
+        
+        vector_of_values.append(value)
+    
+    print('value_but_metrix',vector_of_values)
+    
+    print('softmax :',soft_max(vector_of_values))
+    
+    print("\n")
+    
+        
+    return None
+
+
+
+
 
 for i in range(150) :
     new_w = guess_weight(10,i)
     # print(new_w)
     
         
-    for j in range(n_attribute) :
-        w_sum[j] += new_w[j]
+    # for j in range(n_attribute) :
+    #     w_sum[j] += new_w[j]
     
-print(np.array(w_sum)/150)
+# print(np.array(w_sum)/150)
 
 
 
