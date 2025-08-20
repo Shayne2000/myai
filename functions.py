@@ -27,7 +27,7 @@ def soft_max (array) :
         new_array.append(math.e**i)
     sum_array = sum(new_array)
     
-    print('weight with no - and power by e',new_array)
+    # print('weight with no - and power by e',new_array)
     
     ans = []
     for i in new_array :

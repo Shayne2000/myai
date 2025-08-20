@@ -44,8 +44,10 @@ for i in range(dimention) :  #not sure it has to be array though
 
 # print(y)
 
-# for i in range(len(y)) :
-#     y[i] = encode[y[i]]
+y_calculate = []
+
+for i in range(len(y)) :
+    y_calculate.append(encode[y[i]])
 
 # print(y)
 
@@ -73,43 +75,83 @@ for i in range(dimention) :
 step = 10
 
 
-    
+# print(y_calculate)
 
-print('w :',w_sum)
+# print('w :',w_sum)
 
 # print('old :',xs_const[0:1])
 # print('new :',xs[0:1].values[0]*w)
 # print('diff :',xs[0:1].values[0]*w-xs_const[0:1])
+w_diff = {}
+for outputs in range(dimention) :
+    for inputs in range(4) :
+        w_diff[f'input_node : {inputs}, output_node : {outputs}'] = []
+
+# print(w_diff)
 
 
-
-def guess_weight (adjust_times,index) :
+def guess_weight (adjust_times) :
     
-    vector_of_values = []
+    y_predict = []
+    loss = []
     
-    for output_num in range(dimention):
-
-        value = np.sum(sum(xs[index:index+1].values*w_sum[output_num]))
+    
+    for index in range(10) :
+    
+        vector_of_values = []
         
-        print('value :',value)
+        for output_num in range(dimention):
+            
+            print('\n',xs[index:index+1].values)
+            
+            xs_times_weights = (xs[index:index+1].values*w_sum[output_num])[0]
+
+            value = sum(xs_times_weights)
+            
+            # print('value :',value)
+            
+            vector_of_values.append(value)
+            
+            for input_num,inputs in enumerate(xs[index:index+1].values[0]) :
+                
+                wf = y_calculate[index][output_num] / (inputs*dimention)
+                
+                w_diff[f'input_node : {input_num}, output_node : {output_num}'].append(wf)
+                
+                # print('yf each :',y_calculate[index][output_num])
+                # print('prefered weight :',wf)
         
-        vector_of_values.append(value)
-    
-    print('value_but_metrix',vector_of_values)
-    
-    print('softmax :',soft_max(vector_of_values))
-    
-    print("\n")
+        # print('value_but_metrix',vector_of_values)
+        
+        sf = soft_max(vector_of_values)
+        
+        # print("\npredict :",sf)
+        # print("true values :",y_calculate[index])
+        # print(np.array(sf)-y_calculate[index])
+        
+        # y_predict.append(sf)
+        
+    # print('softmax :',y_predict)
+
+        # print(w_sum)
     
         
+    
+    # print("\n")
+    
+    
     return None
 
 
 
 
 
-for i in range(150) :
-    new_w = guess_weight(10,i)
+
+new_w = guess_weight(10)
+
+print(w_diff)
+
+
     # print(new_w)
     
         
