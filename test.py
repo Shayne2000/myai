@@ -49,7 +49,7 @@ y_calculate = []
 for i in range(len(y)) :
     y_calculate.append(encode[y[i]])
 
-# print(y)
+# print(y_calculate)
 
 # statement = y==df['Species'].unique()[i]
 # y[statement] = my_arr
@@ -105,6 +105,14 @@ def guess_weight (adjust_times,rows,adjust_rate) :
             
             for output_num in range(dimention):
                 
+                ######################################################
+                
+                #             prediction phase                       #
+                
+                ######################################################
+                
+                
+                
                 # print('\n',xs[index:index+1].values)
                 
                 xs_times_weights = (xs[index:index+1].values*w_sum[output_num])[0]
@@ -118,20 +126,50 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                 # print(vector_of_y_values)
                 
                 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                ###########################################################
+                
+                #      start finding adjust here                          #
+                
+                ###########################################################
+                
+                
                 for input_num,inputs in enumerate(xs[index:index+1].values[0]) :
                     
                     delta_y = xs_times_weights[input_num]-y_calculate[index][output_num]
+                    
+                    # print(y_calculate[index])
                     # print(delta_y)
                     
                     if delta_y == 0 :
                         adjust_w = 0
                     else :
-                        adjust_w = inputs*(delta_y/abs(delta_y))*adjust_rate
+                        
+                        # uq = 1
+                        
+                        uq = xs[index:index+1].values[0][input_num] #
+                        
+                        xp = xs_times_weights[input_num] # model prediction
+                        
+                        yp = y_calculate[index][output_num] # true value
+                        
+                        # print(yp)
+                        
+                        adjust_w = (uq*(xp - yp))*adjust_rate
                     # print(adjust_w)
                     w_diff[f'input_node : {input_num}, output_node : {output_num}'].append(adjust_w)
                     
                     
-                    # 
+                    # print(w_diff)
                     
 
                     
@@ -140,6 +178,7 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                 
                 # print(w_sum)
         # print(sum(w_diff['input_node : 1, output_node : 0'])/rows)
+        # print(w_diff)
         for input_num in range(n_attribute) :
             for output_num in range(dimention) :
                 
@@ -177,7 +216,7 @@ def guess_weight (adjust_times,rows,adjust_rate) :
 
 
 
-model = guess_weight(1000,150,0.1)
+model = guess_weight(10,150,0.01)
 
 
 # print(soft_max(new_w))
@@ -185,15 +224,17 @@ model = guess_weight(1000,150,0.1)
 # print(model)
 
 r = 0
-while r != '' :
+while r != 'q' :
     r = int(input('row to check :'))
     a = []
     for i in model :
         x = xs[r:r+1].values[0]
+        # print(x,model[i])
         a.append(sum(model[i]*x))
 
+    # print("a :",a)
     print('predict :',soft_max(a))
-    print('true :',y_calculate[r:r+1][0])
+    print('true :',y_calculate[r:r+1][0],"\n")
 
 
 # print(np.array(w_sum)/150)

@@ -22,9 +22,12 @@ def train_test_split (df,test) :
     return {'train':shuffled_df[0:train],'test':shuffled_df[train:n]}
 
 def soft_max (array) :
+    # print(array)
     new_array = []
     for i in array :
+        print(i)
         new_array.append(math.e**i)
+    print(new_array)
     sum_array = sum(new_array)
     
     # print('weight with no - and power by e',new_array)
