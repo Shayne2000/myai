@@ -4,101 +4,88 @@ import numpy as np
 import random
 
 
+
+
 df = pd.read_csv(r"iris\versions\2\Iris.csv")
 df.dropna(inplace=True)
 
-# print(df.dropna(inplace=True))
-
-# result = train_test_split(df,0.3)
-
-# train = result['train']
-# # # print(len(train))
 
 
-# test = result['test']
-# print(len(test))
+output_num = len(df['Species'].unique()) #number of classification product
 
-dimention = len(df['Species'].unique())
-# print(dimention)
+dimentions = [1,2]
 
-# Id = df['Id']
-xs_const = df[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']]
-y = np.array(df['Species'])
 
-# for i in df.columns :
-#     print(df[i].unique())
+
+xs = df[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']] #x columns
+y = np.array(df['Species']) #y column
+
+
 
 encode = {}
-arr = []
-for i in range(dimention) :
-    arr.append(0)
-    
-# print(arr)
 
-for i in range(dimention) :  #not sure it has to be array though
+
+arr = [] #create sets of 0
+for i in range(output_num) :
+    arr.append(0)
+
+
+for i in range(output_num) :  #one hot encoding
     my_arr = arr[:]
     my_arr[i] = 1
-    encode[df['Species'].unique()[i]] = np.array(my_arr)
-    
-    # print(df['Species'].unique()[i])
+    encode[df['Species'].unique()[i]] = my_arr
 
-# print(y)
 
-y_calculate = []
+y_true = []
 
 for i in range(len(y)) :
-    y_calculate.append(encode[y[i]])
-
-# print(y_calculate)
-
-# statement = y==df['Species'].unique()[i]
-# y[statement] = my_arr
-
-# print(y[y=='Iris-setosa'])
-
-# print(encode['Iris-virginica'])
+    y_true.append(encode[y[i]]) #make y an array for classification
 
 
-xs = xs_const.copy()
+n_attribute = len(xs[0:1].values[0]) #numbers if columns
 
-# print('old :',xs[0:1].values)
+bias = {}
+weight = {}
 
-n_attribute = len(xs[0:1].values[0])
+previous_dimention = n_attribute
+for layer in range(len(dimentions)) :
 
-b = {}
-w_sum = {}
-for i in range(dimention) :
-    w = []
-    for j in range(n_attribute) :   #random ครั้งแรก  ทำครั้งเดียว
-        w.append(random.randint(-10,10))
-    w_sum[i] = w
-    b[f'output_node : {i}'] = random.randint(-10,10)
+    for furter_nudes_num in range(dimentions[layer]) :
+        for closer_node_num in range(previous_dimention) :   #random ครั้งแรก  ทำครั้งเดียว
+            weight[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_nudes_num})"] = random.randint(-10,10)
 
-step = 10
+        bias[f'(layer,node) : ({layer},{furter_nudes_num})'] = random.randint(-10,10)
+    
+    previous_dimention = dimentions[layer]
+
+for furter_node_num in range(output_num) :
+    for closer_node_num in range(previous_dimention) :
+        weight[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
+    
+    bias[f'(layer,node) : ({len(dimentions)},{furter_node_num})'] = random.randint(-10,10)
+    
 
 
-# print(y_calculate)
 
-print('w :',w_sum)
+print('b :',bias)
 
-# print('old :',xs_const[0:1])
-# print('new :',xs[0:1].values[0]*w)
-# print('diff :',xs[0:1].values[0]*w-xs_const[0:1])
+
 w_diff = {}
 b_diff = {}
 
 
-# print(w_diff)
+
 
 
 def guess_weight (adjust_times,rows,adjust_rate) :
+    
+    global output_num
     
     y_predict = []
     loss = []
     
     for loop_num in range(adjust_times) :
-        # print(adjust_times)
-        for outputs in range(dimention) :
+        for outputs in range(output_num) :
             for inputs in range(n_attribute) :
                 w_diff[f'input_node : {inputs}, output_node : {outputs}'] = []
             b_diff[f'output_node : {outputs}'] = []
@@ -108,7 +95,7 @@ def guess_weight (adjust_times,rows,adjust_rate) :
         
             vector_of_y_values = []
             
-            for output_num in range(dimention):
+            for output_num in range(output_num):
                 
                 ######################################################
                 
@@ -120,9 +107,9 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                 
                 # print('\n',xs[index:index+1].values)
                 
-                xs_times_weights = (xs[index:index+1].values*w_sum[output_num])[0]
+                xs_times_weights = (xs[index:index+1].values*weight[output_num])[0]
 
-                y_value = sum(xs_times_weights) + b[f'output_node : {output_num}']
+                y_value = sum(xs_times_weights) + bias[f'output_node : {output_num}']
                 
                 # print('value :',value)
                 
@@ -150,9 +137,9 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                 
                 for input_num,inputs in enumerate(xs[index:index+1].values[0]) :
                     
-                    delta_y = xs_times_weights[input_num]-y_calculate[index][output_num]
+                    delta_y = xs_times_weights[input_num]-y_true[index][output_num]
                     
-                    # print(y_calculate[index])
+                    # print(y_true[index])
                     # print(delta_y)
                     
                     if delta_y == 0 :
@@ -165,7 +152,7 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                         
                         xp = xs_times_weights[input_num] # model prediction
                         
-                        yp = y_calculate[index][output_num] # true value
+                        yp = y_true[index][output_num] # true value
                         
                         # print(yp)
                         
@@ -176,26 +163,26 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                     # print(adjust_w)
                     w_diff[f'input_node : {input_num}, output_node : {output_num}'].append(adjust_w)
                     
-                    b_diff[f'output_node : {output_num}'].append(adjust_rate*(y_value - y_calculate[index][output_num]))
+                    b_diff[f'output_node : {output_num}'].append(adjust_rate*(y_value - y_true[index][output_num]))
                     # print(w_diff)
                     
 
                     
-                    # print('yf each :',y_calculate[index][output_num],'x each :',inputs,"what use :",y_calculate[index][output_num]*dimention / (inputs))
+                    # print('yf each :',y_true[index][output_num],'x each :',inputs,"what use :",y_true[index][output_num]*output_num / (inputs))
                     # print('prefered weight :',wf)
                 
         
                 
                 
-                # print(w_sum)
+                # print(weight)
         # print(sum(w_diff['input_node : 1, output_node : 0'])/rows)
         # print(w_diff)
-        for output_num in range(dimention) :
+        for output_num in range(output_num) :
             for input_num in range(n_attribute) :
                 
-                w_sum[output_num][input_num] = w_sum[output_num][input_num] - (sum(w_diff[f'input_node : {input_num}, output_node : {output_num}'])/rows)
+                weight[output_num][input_num] = weight[output_num][input_num] - (sum(w_diff[f'input_node : {input_num}, output_node : {output_num}'])/rows)
                 
-            b[f'output_node : {output_num}'] = b[f'output_node : {output_num}'] - (sum(b_diff[f'output_node : {output_num}'])/rows)
+            bias[f'output_node : {output_num}'] = b[f'output_node : {output_num}'] - (sum(b_diff[f'output_node : {output_num}'])/rows)
         
                 
                 
@@ -207,14 +194,14 @@ def guess_weight (adjust_times,rows,adjust_rate) :
     
         
     # print(soft_max(vector_of_y_values))
-    # print(list(y_calculate[0:1][0]))
-    # print(soft_max(vector_of_y_values)==list(y_calculate[0:1][0]))
+    # print(list(y_true[0:1][0]))
+    # print(soft_max(vector_of_y_values)==list(y_true[0:1][0]))
         
 
         
     # print('softmax :',y_predict)
 
-    # print(w_sum)
+    # print(weight)
     
     # print('w_diff :',w_diff)
     
@@ -222,35 +209,35 @@ def guess_weight (adjust_times,rows,adjust_rate) :
     # print("\n")
     
     
-    return [w_sum,b]
+    return [weight,bias]
 
 
 
 
 
 
-model = guess_weight(10,150,0.01)
+# model = guess_weight(10,150,0.01)
 
 
-# print(soft_max(new_w))
+# # print(soft_max(new_w))
 
-print(model)
+# print(model)
 
-r = 0
-while r != 'q' :
-    r = int(input('row to check :'))
-    a = []
-    for i in model[0] :
-        x = xs[r:r+1].values[0]
-        # print(x,model[i])
-        a.append(sum(model[0][i]*x)+model[1][i])
+# r = 0
+# while r != 'q' :
+#     r = int(input('row to check :'))
+#     a = []
+#     for i in model[0] :
+#         x = xs[r:r+1].values[0]
+#         # print(x,model[i])
+#         a.append(sum(model[0][i]*x)+model[1][i])
 
-    # print("a :",a)
-    print('predict :',soft_max(a))
-    print('true :',y_calculate[r:r+1][0],"\n")
+#     # print("a :",a)
+#     print('predict :',soft_max(a))
+#     print('true :',y_true[r:r+1][0],"\n")
 
 
-# print(np.array(w_sum)/150)
+# print(np.array(weight)/150)
 
 
 
