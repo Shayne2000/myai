@@ -47,31 +47,33 @@ n_attribute = len(xs[0:1].values[0]) #numbers if columns
 bias = {}
 weight = {}
 
+w_diff = {}
+b_diff = {}
+
+
 previous_dimention = n_attribute
 for layer in range(len(dimentions)) :
 
-    for furter_nudes_num in range(dimentions[layer]) :
+    for furter_node_num in range(dimentions[layer]) :
         for closer_node_num in range(previous_dimention) :   #random ครั้งแรก  ทำครั้งเดียว
-            weight[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_nudes_num})"] = random.randint(-10,10)
+            weight[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
+            w_diff[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = 0
 
-        bias[f'(layer,node) : ({layer},{furter_nudes_num})'] = random.randint(-10,10)
+        bias[f'(layer,node) : ({layer},{furter_node_num})'] = random.randint(-10,10)
+        b_diff[f'(layer,node) : ({layer},{furter_node_num})'] = 0
     
     previous_dimention = dimentions[layer]
 
 for furter_node_num in range(output_num) :
     for closer_node_num in range(previous_dimention) :
         weight[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
+        w_diff[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = 0
     
     bias[f'(layer,node) : ({len(dimentions)},{furter_node_num})'] = random.randint(-10,10)
+    b_diff[f'(layer,node) : ({layer},{furter_node_num})'] = 0
     
 
 
-
-print('b :',bias)
-
-
-w_diff = {}
-b_diff = {}
 
 
 
