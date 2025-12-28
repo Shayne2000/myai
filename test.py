@@ -2,6 +2,37 @@ import pandas as pd
 from functions import *
 import numpy as np
 import random
+import tkinter as tk
+from tkinter import filedialog
+
+def browse_files():
+    global df
+    
+    filename = filedialog.askopenfilename(
+        title="Select a File",
+        initialdir="/",
+        filetypes=(
+            ("CSV files", "*.csv"),  # Filter for specific file types
+            ("All files (not recoment)", "*.*")
+        )
+    )
+    df = pd.read_csv(filename)
+    df.dropna(inplace=True)
+    
+    if not(filename):
+        print("file can't open")
+
+
+screen = tk.Tk()
+header = tk.Label(screen,text="this is ai 123456789",justify=tk.CENTER,font=("Helvetica",20,"bold"))
+header.grid(row=0,column=0,padx=10,pady=10)
+
+
+file_button = tk.Button(text="select file",command=browse_files)
+file_button.grid(row=1,column=0)
+
+
+
 
 
 
@@ -184,7 +215,7 @@ def guess_weight (adjust_times,rows,adjust_rate) :
                 
                 weight[output_num][input_num] = weight[output_num][input_num] - (sum(w_diff[f'input_node : {input_num}, output_node : {output_num}'])/rows)
                 
-            bias[f'output_node : {output_num}'] = b[f'output_node : {output_num}'] - (sum(b_diff[f'output_node : {output_num}'])/rows)
+            bias[f'output_node : {output_num}'] = bias[f'output_node : {output_num}'] - (sum(b_diff[f'output_node : {output_num}'])/rows)
         
                 
                 
@@ -246,3 +277,5 @@ def guess_weight (adjust_times,rows,adjust_rate) :
 # print('old :',xs_const[0:1])
 # print('new :',xs[0:1].values[0]*w)
 # print('diff :',xs[0:1].values[0]*w-xs_const[0:1])
+
+tk.mainloop()
