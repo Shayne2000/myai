@@ -4,23 +4,37 @@ import numpy as np
 import random
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 
 def browse_files():
     global df
     
     filename = filedialog.askopenfilename(
         title="Select a File",
-        initialdir="/",
+        initialdir=r"C:\Users\Lenovo\OneDrive\Desktop\aibuild\iris\versions\2\Iris.csv",
         filetypes=(
             ("CSV files", "*.csv"),  # Filter for specific file types
             ("All files (not recoment)", "*.*")
         )
     )
+    if not(filename):
+        print("file can't open")
+        
     df = pd.read_csv(filename)
     df.dropna(inplace=True)
     
-    if not(filename):
-        print("file can't open")
+    label_showPart.config(text=filename)
+    
+    comboboxOption = ['ID','LABEL','FEATURES','NULL']
+    comboboxOptionIndex = tk.StringVar(value=comboboxOption[-1])
+    for index,value in enumerate(df.columns) :
+        tk.Label(screen,text=value).grid(row=index+2,column=0,pady=10)
+        obj = ttk.Combobox(screen,values=comboboxOption,textvariable=comboboxOptionIndex.get())
+        obj.grid(row=index+2,column=1)
+    
+    
+    
+    
 
 
 screen = tk.Tk()
@@ -30,6 +44,11 @@ header.grid(row=0,column=0,padx=10,pady=10)
 
 file_button = tk.Button(text="select file",command=browse_files)
 file_button.grid(row=1,column=0)
+
+label_showPart = tk.Label()
+label_showPart.grid(row=1,column=1,padx=10,pady=10)
+
+
 
 
 
