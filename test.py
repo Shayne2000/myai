@@ -26,40 +26,41 @@ def browse_files():
     label_showPart.config(text=filename)
     
     comboboxOption_columns = ['ID','LABEL','FEATURES','']
-    column_list = []
+    column_list = {}
     
     for index,value in enumerate(df.columns) :
         comboboxOptionIndex = tk.StringVar()
         tk.Label(screen,text=value).grid(row=index+2,column=0,pady=10)
         obj = ttk.Combobox(screen,values=comboboxOption_columns,textvariable=comboboxOptionIndex)
         obj.grid(row=index+2,column=1)
-        column_list.append(obj)
+        column_list[obj] = value
         
-    selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list))
+    selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list,index))
     selectData_button.grid(row=index+3,column=1,pady=10)
+    
+    
         
     
 
-def selectData (column_list) :
-    feature_count = 0
-    label_count = 0
-    id_count = 0
+def selectData (column_list,index) :
+    
+    feedBack_label.grid(row=index+3,column=2,padx=10,pady=10) #declare in mainprogram
+    
+    feature_list = []
+    label_list = []
     for column in column_list :
         if column.get() == "FEATURES" :
-            feature_count += 1
+            feature_list.append(column)
         elif column.get() == "LABEL" :
-            label_count += 1
-        elif column.get() == "ID" :
-            id_count += 1
-        
-    if feature_count <= 0 :
-        print("no feature..... select again")
-    elif label_count != 1 :
-        print("their should be 1 label..... select again")
-    elif id_count > 1 :
-        print("their should be 1 id..... select again")
+            label_list.append(column)
+    
+    
+    if len(feature_list) <= 0 :
+        feedBack_label.config(text="no feature..... select again")
+    elif len(label_list) != 1 :
+        feedBack_label.config(text="their should be 1 label..... select again")
     else :
-        print("select data success")
+        feedBack_label.config(text="select data success.....")
     
     
     
@@ -76,7 +77,7 @@ file_button.grid(row=1,column=0)
 label_showPart = tk.Label()
 label_showPart.grid(row=1,column=1,padx=10,pady=10)
 
-
+feedBack_label = tk.Label(screen)
 
 
 
