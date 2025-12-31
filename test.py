@@ -35,16 +35,18 @@ def browse_files():
         obj.grid(row=index+2,column=1)
         column_list[obj] = value
         
-    selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list,index))
-    selectData_button.grid(row=index+3,column=1,pady=10)
+    selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list,index,selectedColumn_list))
+    selectData_button.grid(row=index+3,column=0,pady=10)
+    
+    selectedColumn_list = []
     
     
         
     
 
-def selectData (column_list,index) :
+def selectData (column_list,baseRow,selectedColumn_list) :
     
-    feedBack_label.grid(row=index+3,column=2,padx=10,pady=10) #declare in mainprogram
+    feedBack_label.grid(row=baseRow+3,column=1,padx=10,pady=10) #declare in mainprogram
     
     feature_list = []
     label_list = []
@@ -61,6 +63,12 @@ def selectData (column_list,index) :
         feedBack_label.config(text="their should be 1 label..... select again")
     else :
         feedBack_label.config(text="select data success.....")
+        
+        for column in selectedColumn_list :
+            column.destroy()
+        
+        for index,value in enumerate(feature_list) :
+            selectedColumn_list.append(tk.Label(text=column_list[value]).grid(row=index+baseRow+4,column=0,pady=10))
     
     
     
@@ -68,11 +76,11 @@ def selectData (column_list,index) :
 
 screen = tk.Tk()
 header = tk.Label(screen,text="this is ai 123456789",justify=tk.CENTER,font=("Helvetica",20,"bold"))
-header.grid(row=0,column=0,padx=10,pady=10)
+header.grid(row=0,column=0,padx=10,pady=10,columnspan=2)
 
 
 file_button = tk.Button(text="select file",command=browse_files)
-file_button.grid(row=1,column=0)
+file_button.grid(row=1,column=0,padx=20)
 
 label_showPart = tk.Label()
 label_showPart.grid(row=1,column=1,padx=10,pady=10)
