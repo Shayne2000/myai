@@ -38,7 +38,7 @@ def browse_files():
     selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list,index,selectedColumn_list))
     selectData_button.grid(row=index+3,column=0,pady=10)
     
-    selectedColumn_list = []
+    selectedColumn_list = {}
     
     
         
@@ -64,11 +64,15 @@ def selectData (column_list,baseRow,selectedColumn_list) :
     else :
         feedBack_label.config(text="select data success.....")
         
+        print(selectedColumn_list)
+        
         for column in selectedColumn_list :
-            column.destroy()
+            selectedColumn_list[column].destroy()
         
         for index,value in enumerate(feature_list) :
-            selectedColumn_list.append(tk.Label(text=column_list[value]).grid(row=index+baseRow+4,column=0,pady=10))
+            obj = tk.Label(text=column_list[value])
+            obj.grid(row=index+baseRow+4,column=0,pady=10)
+            selectedColumn_list[index+baseRow+4] = obj
     
     
     
