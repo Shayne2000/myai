@@ -64,8 +64,6 @@ def selectData (column_list,baseRow,selectedColumn_list) :
     else :
         feedBack_label.config(text="select data success.....")
         
-        print(selectedColumn_list)
-        
         for column in selectedColumn_list :
             selectedColumn_list[column].destroy()
         
@@ -73,6 +71,11 @@ def selectData (column_list,baseRow,selectedColumn_list) :
             obj = tk.Label(text=column_list[value])
             obj.grid(row=index+baseRow+4,column=0,pady=10)
             selectedColumn_list[index+baseRow+4] = obj
+            
+            comboboxOption_selectedColumns = ['INTEGER','FLOAT','STRING']
+            comboboxOptionIndex = tk.StringVar()
+            obj  = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
+            obj.grid(row=index+baseRow+4,column=1,pady=10)
     
     
     
