@@ -76,17 +76,37 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         for column in selectedColumn_list :
             selectedColumn_list[column].destroy()
         
+        comboboxOption_selectedColumns = ['INTEGER','FLOAT','STRING']
         for index,value in enumerate(feature_list) :
             obj = tk.Label(text=column_list[value])
             obj.grid(row=index+baseRow+4,column=0,pady=10)
             selectedColumn_list[index+baseRow+4] = obj
             
-            comboboxOption_selectedColumns = ['INTEGER','FLOAT','STRING']
             comboboxOptionIndex = tk.StringVar()
             obj  = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
             obj.grid(row=index+baseRow+4,column=1,pady=10)
+        
+        selectedLabel_label = tk.Label(text="==>{}".format(column_list[label_list[0]]))
+        selectedLabel_label.grid(row=index+baseRow+5,column=0,pady=10)
+        
+        comboboxOption_selectedColumns = ['INTEGER ==> regression','FLOAT ==> regression','STRING ==> classification']
+        comboboxOptionIndex = tk.StringVar()
+        selectedLabel_combobox = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
+        selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
+        
+        
+        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list))
+        confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
+        
+        confirmTypeFeedback_label.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
+        
+        
     
-    
+
+def modifyModel (column_list,feature_list,label_list) :
+    for feature in feature_list :
+        if feature.get() :
+            confirmTypeFeedback_label
     
 
 
@@ -102,7 +122,7 @@ label_showPart = tk.Label()
 label_showPart.grid(row=1,column=1,padx=10,pady=10)
 
 feedBack_label = tk.Label(screen)
-
+confirmTypeFeedback_label = tk.Label(screen)
 
 
 
