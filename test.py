@@ -5,6 +5,7 @@ import random
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
+# import tkinter.messagebox as ms
 
 def browse_files():
     global df
@@ -25,7 +26,7 @@ def browse_files():
     
     label_showPart.config(text=filename)
     
-    comboboxOption_columns = ['ID','LABEL','FEATURES','']
+    comboboxOption_columns = ['ID','LABEL','FEATURES','**preview data**','']
     column_list = {}
     
     for index,value in enumerate(df.columns) :
@@ -33,12 +34,20 @@ def browse_files():
         tk.Label(screen,text=value).grid(row=index+2,column=0,pady=10)
         obj = ttk.Combobox(screen,values=comboboxOption_columns,textvariable=comboboxOptionIndex)
         obj.grid(row=index+2,column=1)
+        obj.bind("<<ComboboxSelected>>",column_combobox_changeValue)
         column_list[obj] = value
         
     selectData_button = tk.Button(screen,text="SELECT DATA",command=lambda : selectData(column_list,index,selectedColumn_list))
     selectData_button.grid(row=index+3,column=0,pady=10)
     
     selectedColumn_list = {}
+    
+
+def column_combobox_changeValue (event) :
+    if event.widget.get() == "**preview data**" :
+        # ms.showinfo(title="TITLE",message="this is Shayne's program")
+        pass
+        
     
     
         
