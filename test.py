@@ -74,17 +74,19 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         feedBack_label.config(text="select data success.....")
         
         for column in selectedColumn_list :
-            selectedColumn_list[column].destroy()
+            selectedColumn_list[column][0].destroy()
+            selectedColumn_list[column][1].destroy()
         
         comboboxOption_selectedColumns = ['INTEGER','FLOAT','STRING']
         for index,value in enumerate(feature_list) :
             obj = tk.Label(text=column_list[value])
             obj.grid(row=index+baseRow+4,column=0,pady=10)
-            selectedColumn_list[index+baseRow+4] = obj
             
             comboboxOptionIndex = tk.StringVar()
-            obj  = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
-            obj.grid(row=index+baseRow+4,column=1,pady=10)
+            obj1  = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
+            obj1.grid(row=index+baseRow+4,column=1,pady=10)
+            
+            selectedColumn_list[index+baseRow+4] = [obj,obj1]
         
         selectedLabel_label = tk.Label(text="==>{}".format(column_list[label_list[0]]))
         selectedLabel_label.grid(row=index+baseRow+5,column=0,pady=10)
@@ -95,7 +97,7 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
         
         
-        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list))
+        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,selectedLabel_combobox.get()))
         confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
         
         confirmTypeFeedback_label.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
@@ -103,10 +105,18 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         
     
 
-def modifyModel (column_list,feature_list,label_list) :
-    for feature in feature_list :
-        if feature.get() :
-            confirmTypeFeedback_label
+def modifyModel (selectedColumn_list,selectedLabel_combobox) :
+    for column in selectedColumn_list :
+        if selectedColumn_list[column][1].get() == '' :
+            print("no")
+            return 0
+    
+    if selectedLabel_combobox == '' :
+        print('no')
+        return 0
+    
+    
+            
     
 
 
