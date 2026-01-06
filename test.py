@@ -97,7 +97,7 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
         
         
-        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,selectedLabel_combobox.get()))
+        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,selectedLabel_combobox.get(),index+baseRow+6))
         confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
         
         confirmTypeFeedback_label.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
@@ -105,7 +105,7 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         
     
 
-def modifyModel (selectedColumn_list,selectedLabel_combobox) :
+def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
     for column in selectedColumn_list :
         if selectedColumn_list[column][1].get() == '' :
             print("no")
@@ -114,6 +114,12 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox) :
     if selectedLabel_combobox == '' :
         print('no')
         return 0
+    
+    selectedColumn_list_df = []
+    for index in selectedColumn_list :
+        selectedColumn_list_df.append(selectedColumn_list[index][0].cget("text"))
+
+    x = df[selectedColumn_list_df]
     
     
             
@@ -134,77 +140,77 @@ label_showPart.grid(row=1,column=1,padx=10,pady=10)
 feedBack_label = tk.Label(screen)
 confirmTypeFeedback_label = tk.Label(screen)
 
+df = pd.DataFrame()
+
+
+def premodel () :
+
+    
 
 
 
 
+    output_num = len(df['Species'].unique()) #number of classification product
 
-df = pd.read_csv(r"iris\versions\2\Iris.csv")
-df.dropna(inplace=True)
-
-
-
-output_num = len(df['Species'].unique()) #number of classification product
-
-dimentions = [1,2]
+    dimentions = [1,2]
 
 
 
-xs = df[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']] #x columns
-y = np.array(df['Species']) #y column
+    xs = df[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']] #x columns
+    y = np.array(df['Species']) #y column
 
 
 
-encode = {}
+    encode = {}
 
 
-arr = [] #create sets of 0
-for i in range(output_num) :
-    arr.append(0)
+    arr = [] #create sets of 0
+    for i in range(output_num) :
+        arr.append(0)
 
 
-for i in range(output_num) :  #one hot encoding
-    my_arr = arr[:]
-    my_arr[i] = 1
-    encode[df['Species'].unique()[i]] = my_arr
+    for i in range(output_num) :  #one hot encoding
+        my_arr = arr[:]
+        my_arr[i] = 1
+        encode[df['Species'].unique()[i]] = my_arr
 
 
-y_true = []
+    y_true = []
 
-for i in range(len(y)) :
-    y_true.append(encode[y[i]]) #make y an array for classification
-
-
-n_attribute = len(xs[0:1].values[0]) #numbers if columns
-
-bias = {}
-weight = {}
-
-w_diff = {}
-b_diff = {}
+    for i in range(len(y)) :
+        y_true.append(encode[y[i]]) #make y an array for classification
 
 
-previous_dimention = n_attribute
-for layer in range(len(dimentions)) :
+    n_attribute = len(xs[0:1].values[0]) #numbers if columns
 
-    for furter_node_num in range(dimentions[layer]) :
-        for closer_node_num in range(previous_dimention) :   #random ครั้งแรก  ทำครั้งเดียว
-            weight[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
-            w_diff[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = 0
+    bias = {}
+    weight = {}
 
-        bias[f'(layer,node) : ({layer},{furter_node_num})'] = random.randint(-10,10)
+    w_diff = {}
+    b_diff = {}
+
+
+    previous_dimention = n_attribute
+    for layer in range(len(dimentions)) :
+
+        for furter_node_num in range(dimentions[layer]) :
+            for closer_node_num in range(previous_dimention) :   #random ครั้งแรก  ทำครั้งเดียว
+                weight[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
+                w_diff[f"(layer,closer,furter) : ({layer},{closer_node_num},{furter_node_num})"] = 0
+
+            bias[f'(layer,node) : ({layer},{furter_node_num})'] = random.randint(-10,10)
+            b_diff[f'(layer,node) : ({layer},{furter_node_num})'] = 0
+        
+        previous_dimention = dimentions[layer]
+
+    for furter_node_num in range(output_num) :
+        for closer_node_num in range(previous_dimention) :
+            weight[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
+            w_diff[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = 0
+        
+        bias[f'(layer,node) : ({len(dimentions)},{furter_node_num})'] = random.randint(-10,10)
         b_diff[f'(layer,node) : ({layer},{furter_node_num})'] = 0
-    
-    previous_dimention = dimentions[layer]
-
-for furter_node_num in range(output_num) :
-    for closer_node_num in range(previous_dimention) :
-        weight[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = random.randint(-10,10)
-        w_diff[f"(layer,closer,furter) : ({len(dimentions)},{closer_node_num},{furter_node_num})"] = 0
-    
-    bias[f'(layer,node) : ({len(dimentions)},{furter_node_num})'] = random.randint(-10,10)
-    b_diff[f'(layer,node) : ({layer},{furter_node_num})'] = 0
-    
+        
 
 
 
