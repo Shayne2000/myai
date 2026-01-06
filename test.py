@@ -97,7 +97,7 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
         
         
-        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,selectedLabel_combobox.get(),index+baseRow+6))
+        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,[selectedLabel_combobox.get(),column_list[label_list[0]]],index+baseRow+6))
         confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
         
         confirmTypeFeedback_label.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
@@ -121,6 +121,8 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
 
     x = df[selectedColumn_list_df]
     
+    y = df[selectedLabel_combobox[1]]
+    
     
             
     
@@ -141,14 +143,11 @@ feedBack_label = tk.Label(screen)
 confirmTypeFeedback_label = tk.Label(screen)
 
 df = pd.DataFrame()
+x = pd.DataFrame()
+y = pd.DataFrame()
 
 
 def premodel () :
-
-    
-
-
-
 
     output_num = len(df['Species'].unique()) #number of classification product
 
