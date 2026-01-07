@@ -119,13 +119,25 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
     for index in selectedColumn_list :
         selectedColumn_list_df.append(selectedColumn_list[index][0].cget("text"))
 
+
+    global x,y
+
     x = df[selectedColumn_list_df]
     
     y = df[selectedLabel_combobox[1]]
     
+    print(selectedLabel_combobox)
+    models = {'INTEGER ==> regression':lambda x = "int" : regression(x),'FLOAT ==> regression':lambda x = "float" : regression(x),'STRING ==> classification':classification}
+    for i in models :
+        if selectedLabel_combobox[0] == i :
+            models[i]()
     
             
+def regression(label_datatype) :
+    print(label_datatype)
     
+def classification() :
+    print("yesy")
 
 
 screen = tk.Tk()
@@ -146,6 +158,8 @@ df = pd.DataFrame()
 x = pd.DataFrame()
 y = pd.DataFrame()
 
+def test() :
+    print(y)
 
 def premodel () :
 
