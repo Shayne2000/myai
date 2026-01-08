@@ -97,7 +97,7 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
         
         
-        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,[selectedLabel_combobox.get(),column_list[label_list[0]]],index+baseRow+6))
+        confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,[selectedLabel_combobox.get(),column_list[label_list[0]]],baseRow+4))
         confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
         
         confirmTypeFeedback_label.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
@@ -127,7 +127,7 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
     y = df[selectedLabel_combobox[1]]
     
     print(selectedLabel_combobox)
-    models = {'INTEGER ==> regression':lambda x = "int" : regression(x),'FLOAT ==> regression':lambda x = "float" : regression(x),'STRING ==> classification':classification}
+    models = {'INTEGER ==> regression':lambda x = "int" : regression(x),'FLOAT ==> regression':lambda x = "float" : regression(x),'STRING ==> classification':lambda x =  baseRow : classification(x)}
     for i in models :
         if selectedLabel_combobox[0] == i :
             models[i]()
@@ -136,8 +136,15 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
 def regression(label_datatype) :
     print(label_datatype)
     
-def classification() :
-    print("yesy")
+def classification(baseRow) :
+
+    output_num = len(y.unique()) #number of classification product
+    
+    board.grid(row=baseRow,column=3,padx=20,rowspan=len(x.columns)+1,columnspan=2) # canvas declared on main program
+    
+    tk.Label(text="number of hidden layer").grid(row=baseRow-1,column=3)
+    tk.Entry().grid(row=baseRow-1,column=4)
+
 
 
 screen = tk.Tk()
@@ -158,8 +165,7 @@ df = pd.DataFrame()
 x = pd.DataFrame()
 y = pd.DataFrame()
 
-def test() :
-    print(y)
+board = tk.Canvas(screen,bg="white")
 
 def premodel () :
 
