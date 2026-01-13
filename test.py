@@ -140,10 +140,11 @@ def classification(baseRow) :
 
     output_num = len(y.unique()) #number of classification product
     
-    board.grid(row=baseRow,column=3,padx=20,rowspan=len(x.columns)+1,columnspan=2) # canvas declared on main program
+    board.grid(row=baseRow,column=3,padx=20,rowspan=len(x.columns)+1,columnspan=3) # canvas declared on main program
     
     tk.Label(text="number of hidden layer").grid(row=baseRow-1,column=3)
     tk.Entry().grid(row=baseRow-1,column=4)
+    tk.Button(text="confirm layers").grid(row=baseRow-1,column=5)
 
 
 
@@ -165,7 +166,7 @@ df = pd.DataFrame()
 x = pd.DataFrame()
 y = pd.DataFrame()
 
-board = tk.Canvas(screen,bg="white")
+board = tk.Canvas(screen,bg="white", width=400, height=300)
 
 def premodel () :
 
