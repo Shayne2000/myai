@@ -54,6 +54,7 @@ def column_combobox_changeValue (event) :
     
 
 def selectData (column_list,baseRow,selectedColumn_list) :
+    global selected_label
     
     feedBack_label.grid(row=baseRow+3,column=1,padx=10,pady=10) #declare in mainprogram
     
@@ -96,6 +97,8 @@ def selectData (column_list,baseRow,selectedColumn_list) :
         selectedLabel_combobox = ttk.Combobox(screen,values=comboboxOption_selectedColumns,textvariable=comboboxOptionIndex)
         selectedLabel_combobox.grid(row=index+baseRow+5,column=1)
         
+        selected_label = column_list[label_list[0]]
+        
         
         confirmType_button = tk.Button(screen,text="CONFIRM DATA TYPE",command=lambda : modifyModel(selectedColumn_list,[selectedLabel_combobox.get(),column_list[label_list[0]]],baseRow+4))
         confirmType_button.grid(row=index+baseRow+6,column=0,padx=10,pady=10)
@@ -106,6 +109,8 @@ def selectData (column_list,baseRow,selectedColumn_list) :
     
 
 def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
+    global selected_columns
+    selected_columns = selectedColumn_list
     for column in selectedColumn_list :
         if selectedColumn_list[column][1].get() == '' :
             print("no")
@@ -127,7 +132,7 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
     y = df[selectedLabel_combobox[1]]
     
     print(selectedLabel_combobox)
-    models = {'INTEGER ==> regression':lambda x = "int" : regression(x),'FLOAT ==> regression':lambda x = "float" : regression(x),'STRING ==> classification':lambda x =  baseRow : classification(x)}
+    models = {'INTEGER ==> regression':lambda x = "int" : regression(x),'FLOAT ==> regression':lambda x = "float" : regression(x),'STRING ==> classification':lambda x =  baseRow : classification1(x)}
     for i in models :
         if selectedLabel_combobox[0] == i :
             models[i]()
@@ -136,15 +141,61 @@ def modifyModel (selectedColumn_list,selectedLabel_combobox,baseRow) :
 def regression(label_datatype) :
     print(label_datatype)
     
-def classification(baseRow) :
+def classification1(baseRow) :
 
     output_num = len(y.unique()) #number of classification product
     
     board.grid(row=baseRow,column=3,padx=20,rowspan=len(x.columns)+1,columnspan=3) # canvas declared on main program
     
     tk.Label(text="number of hidden layer").grid(row=baseRow-1,column=3)
-    tk.Entry().grid(row=baseRow-1,column=4)
-    tk.Button(text="confirm layers").grid(row=baseRow-1,column=5)
+    hiddenlayer_num_Entry = tk.Entry()
+    hiddenlayer_num_Entry.grid(row=baseRow-1,column=4)
+    print(hiddenlayer_num_Entry.get())
+    tk.Button(text="confirm layers",command = lambda x = hiddenlayer_num_Entry,y=baseRow-1 : selectingHiddenlayerSize(x,y)).grid(row=baseRow-1,column=5)
+    
+
+def selectingHiddenlayerSize(hiddenlayer_num,baserow) :
+
+    n = int(hiddenlayer_num.get())
+    l = []
+    for layer in range(1,n+1) :
+        tk.Label(text=f"Hidden layer {layer}").grid(row = baserow-layer , column=3)
+        
+        obj = tk.Entry()
+        obj.grid(row=baserow-layer , column=4)
+        l.append(obj)
+        
+    tk.Button(screen,text="confirm hidden layers",command=lambda x = l : draw(x)).grid(row=baserow-1 , column= 5)
+
+
+def draw (entryObj_list) :
+    n_forEachLayer = [len(selected_columns)]
+    
+    for i in entryObj_list :
+        n_forEachLayer.append(int(i.get()))
+    
+    n_forEachLayer.append(len(df[selected_label].unique()))
+    
+    layer = len(n_forEachLayer)
+    
+    boundary = 0.03
+    a = 0.5
+    
+    size = min([canvas_h/max(n_forEachLayer),canvas_w/(layer*(1+a*2))])
+    
+    for j in range(layer) :
+        for i in range(n_forEachLayer[j]) :
+            space = (canvas_h-(n_forEachLayer[j]*size*(1+boundary)))/(n_forEachLayer[j]+1)
+            
+            board.create_oval(j*size+(size*boundary)+(size*a*(j*2+1)),space + i*(space+size*(1+boundary)),(j+1)*size-(size*boundary)+(size*a*(j*2+1)), (i+1)*(space+size*(1+boundary)))
+            
+            c = ((j+1)*size+(size*boundary)+(size*a*(j*2+1)),space + i*(space+size*(1+boundary)) + size*(1+boundary)/2)
+                
+            if j != layer-1 :
+                space_next = (canvas_h-(n_forEachLayer[j+1]*size*(1+boundary)))/(n_forEachLayer[j+1]+1)
+                for k in range(n_forEachLayer[j+1]) :
+                    board.create_line(c[0],c[1],(j+1)*size+(size*boundary)+(size*a*((j+1)*2+1)), space_next + (size/2) + k*(space_next+size*(1+boundary)),fill='blue')
+    
 
 
 
@@ -166,7 +217,12 @@ df = pd.DataFrame()
 x = pd.DataFrame()
 y = pd.DataFrame()
 
+canvas_h = 300
+canvas_w = 400
 board = tk.Canvas(screen,bg="white", width=400, height=300)
+
+selected_columns = {}
+selected_label = None
 
 def premodel () :
 
